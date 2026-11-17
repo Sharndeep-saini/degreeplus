@@ -1,33 +1,27 @@
-# Put Degree Plus on Cloudflare (beginner steps)
+# Degree Plus on Cloudflare (Worker + static site + lead database)
 
-## Method A (recommended): connect your GitHub repo — the lead form works
-Your code is at https://github.com/Sharndeep-saini/degreeplus
-1. Log in at https://dash.cloudflare.com → left menu **Workers & Pages** → **Create** → **Pages** → **Connect to Git**.
-2. Choose GitHub, allow access, select the repo **degreeplus** → **Begin setup**.
-3. Settings:
-   - Project name: `degreeplus`
-   - Production branch: `main`
-   - Framework preset: **None**
-   - Build command: `npm run build`
-   - Build output directory: `dist`
-4. Click **Save and Deploy**. After ~1 minute you get `https://degreeplus.pages.dev`.
+The repo deploys with `npx wrangler deploy`. Cloudflare does the rest:
+- builds the site (`npm run build` → `dist/`)
+- serves it, and runs the lead-form API at `/api/lead`
+- creates the D1 database `degreeplus-leads` on first deploy and creates its table on first use
 
-## Make the lead form save enquiries (one time, ~5 minutes)
-1. Left menu **Storage & Databases** → **D1 SQL Database** → **Create database**, name: `degreeplus-leads`.
-2. Open it → **Console** tab → paste the contents of `schema.sql` → **Execute**.
-3. Go to **Workers & Pages** → **degreeplus** → **Settings** → **Bindings** → **Add** → **D1 database**:
-   - Variable name: `DB`  (exactly, capital letters)
-   - D1 database: `degreeplus-leads`  → Save.
-4. Settings → **Variables and Secrets** → **Add**: name `ADMIN_TOKEN`, value = any long random password (type = Secret). Save.
-5. **Deployments** tab → on the latest deployment click **⋯ → Retry deployment** (so the new settings apply).
-6. Test: open your site, submit the form. Then open
-   `https://degreeplus.pages.dev/api/leads?token=YOUR_ADMIN_TOKEN` — it downloads all enquiries as a spreadsheet.
+## Settings in Cloudflare (Workers & Pages → degreeplus → Settings → Build)
+- Build command: `npm run build`
+- Deploy command: `npx wrangler deploy`
+- Root directory: `/`
+Every push to GitHub `main` rebuilds and deploys automatically.
 
-## Method B (quickest, but the form will NOT save): upload the `dist` folder
-Workers & Pages → Create → Pages → **Upload assets** → drag the `dist` folder. Site works; form shows the call/WhatsApp fallback.
+## One thing to do by hand: the private password for downloading leads
+Workers & Pages → degreeplus → Settings → **Variables and Secrets** → Add:
+- Type: **Secret**, Name: `ADMIN_TOKEN`, Value: a long random password → Deploy.
+Then download all enquiries (opens in Excel) at:
+`https://YOUR-SITE/api/leads?token=YOUR_PASSWORD`
+
+## Optional: email alert for every enquiry
+Create a free key at resend.com, then add secrets `RESEND_API_KEY` and `NOTIFY_EMAIL` (your email).
 
 ## Your own domain
-Pages project → **Custom domains** → **Set up a custom domain**.
+Workers & Pages → degreeplus → Settings → **Domains & Routes** → Add → Custom domain.
 
 ## Changing content
-Edit `data/content.mjs` (fees, courses, FAQs, Punjabi text) → `npm run build`. With Method A, every push to GitHub redeploys automatically.
+Edit `data/content.mjs` (fees, courses, FAQs, Punjabi text), push to GitHub — it redeploys itself.

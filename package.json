@@ -6,6 +6,6 @@
   "scripts": {
     "build": "node build.mjs",
     "preview": "node build.mjs && npx --yes http-server dist -p 8080 -c-1",
-    "deploy": "node build.mjs && npx wrangler pages deploy dist --project-name degreeplus"
+    "deploy": "node build.mjs && npx wrangler deploy"
   }
 }
