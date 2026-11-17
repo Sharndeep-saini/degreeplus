@@ -1,0 +1,9 @@
+name = "degreeplus"
+compatibility_date = "2025-01-01"
+pages_build_output_dir = "dist"
+
+# After running `wrangler d1 create degreeplus-leads`, paste the database_id below.
+[[d1_databases]]
+binding = "DB"
+database_name = "degreeplus-leads"
+database_id = "REPLACE_WITH_YOUR_D1_ID"
