@@ -114,8 +114,10 @@
         const msg = encodeURIComponent(`Hi Degree Plus, I am ${body.name}. I submitted an enquiry for ${body.course}.`);
         form.innerHTML = `<div class="success"><span class="tick"><svg class="ico"><use href="#i-check"/></svg></span><h3>${L('Thank you!', 'ਧੰਨਵਾਦ!')}</h3><p>${L('We have your details. A counsellor will call you within one working day.', 'ਤੁਹਾਡੇ ਵੇਰਵੇ ਮਿਲ ਗਏ ਹਨ। ਕਾਊਂਸਲਰ ਇੱਕ ਕੰਮਕਾਜੀ ਦਿਨ ਵਿੱਚ ਕਾਲ ਕਰੇਗਾ।')}</p><p><a class="btn btn-accent" href="https://wa.me/919592912356?text=${msg}" target="_blank" rel="noopener">${L('Chat on WhatsApp now', 'ਹੁਣੇ ਵਟਸਐਪ ਕਰੋ')}</a></p></div>`;
       } catch {
-        btn.disabled = false; status.className = 'form-status err';
-        status.innerHTML = `${L('Could not send right now. Please call', 'ਹੁਣ ਨਹੀਂ ਭੇਜਿਆ ਜਾ ਸਕਿਆ। ਕਿਰਪਾ ਕਰਕੇ ਕਾਲ ਕਰੋ')} <a href="tel:+919592912356">+91 9592912356</a> ${L('or', 'ਜਾਂ')} <a href="https://wa.me/919592912356" target="_blank" rel="noopener">WhatsApp</a>.`;
+        // Backend not reachable: send the same details through WhatsApp so the enquiry is never lost
+        btn.disabled = false; status.className = 'form-status';
+        const txt = `Hi Degree Plus, please call me.\nName: ${body.name}\nMobile: ${body.phone}\nCourse: ${body.course}\nUniversity: ${body.university}\nLocation: ${body.district}, ${body.state}`;
+        status.innerHTML = `${L('Almost done — tap to send your details on WhatsApp:', 'ਲਗਭਗ ਹੋ ਗਿਆ — ਆਪਣੇ ਵੇਰਵੇ ਵਟਸਐਪ ਤੇ ਭੇਜਣ ਲਈ ਟੈਪ ਕਰੋ:')} <a class="btn btn-accent sm" href="https://wa.me/919592912356?text=${encodeURIComponent(txt)}" target="_blank" rel="noopener">${L('Send on WhatsApp', 'ਵਟਸਐਪ ਤੇ ਭੇਜੋ')}</a> <span class="muted">${L('or call', 'ਜਾਂ ਕਾਲ ਕਰੋ')} <a href="tel:+919592912356">+91 9592912356</a></span>`;
       }
     });
   });
